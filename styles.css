@@ -1,3 +1,4 @@
+*:focus{outline:none;}
 h2{font-family:Georgia,Times,"TimesNewRoman",serif;}
 body{font:14px/21px"LucidaSans","LucidaGrande","LucidaSansUnicode",sans-serif;background:#dfe3e3;}
 #wrap{width:1000px;min-width:1000px;margin:auto;}
@@ -7,7 +8,6 @@ header{background:linear-gradient(to top,#8f9c9c,#DCDCDC);padding:10px 0 10px 10
 #sotr{height:300px;min-height:200px;overflow-y:auto;}
 #edit{background:linear-gradient(to top,#8f9c9c,#DCDCDC);height:170px;min-height:170px;overflow:auto;}
 #textarea{float:left;background:none repeat scroll 0 0 #DCDCDC;font-size: 12px;width:60%;min-height:115px;height:115px;margin:5px;padding:4px;overflow:auto;resize:none;}
-
 ul{margin: 0;padding: 10px;font-size: 12px;}
 li { display: inline-block;  list-style: none;  vertical-align: middle; height:50px;}
 
@@ -49,8 +49,8 @@ li { display: inline-block;  list-style: none;  vertical-align: middle; height:5
 .sel-css:hover {border-color: #888;}
 .sel-css:focus {border-color: #aaa;color: #222; outline: none;}
 .sel-css option {font-weight:normal;}
-.sel-css:disabled  {color: graytext;background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'), linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);}
-.sel-css:disabled:hover{border-color: #aaa;}
+.sel-css:disabled  {	color: graytext;	background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'), linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);}
+.sel-css:disabled:hover{	border-color: #aaa;}
  
 .dropdown-content {display: none;position: absolute;background-color: #f1f1f1;min-width: 260px;box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);z-index: 1;cursor: pointer;}
 .dropdown-content a {padding: 1px 10px;display: block;}
@@ -66,8 +66,3 @@ li { display: inline-block;  list-style: none;  vertical-align: middle; height:5
 
 #sotr_resize,#edit_resize{border-top-color: #a3acac; border-top-width: 1px; border-top-style: solid; border-bottom-color: #a3acac; border-bottom-width: 1px; border-bottom-style: solid;cursor:nwse-resize;height:2px;width:100%;}
 footer{background:linear-gradient(to top,#8f9c9c,#DCDCDC);padding:10px 0 10px 0;color:#666666;text-align:center;}
-
-/*
-*:focus{outline:none;}
-*/
-

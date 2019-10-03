@@ -1,3 +1,9 @@
+
+
+
+
+
+
     var token = 'a50a6fe31dcfc65942211faf7dd66cf27043f877'; //Тестовый токен
 
     var api_server = 'http://t6m.ru/api/';   // сервер API
@@ -12,41 +18,20 @@
     
     var sample_array =[]; //массив примеров
 
-	document.addEventListener('DOMContentLoaded', function(){
+	window.onload = start;
+	function start() {
 		if (!navigator.onLine) {alert('Отсутствует интернет подключение');return;}
-		init_();
+		init();
 		document.getElementById('m').selectedIndex =  (new Date()).getMonth(); // Рабочий месяц
-		document.getElementById('textarea').value = txt_default; // Текст по умолчанию
+		document.getElementById('textarea').value = txt_default; // По умолчанию
 		Send_Json(0); // Авторизация
 		Send_Json(1); // Инициализация
-		Send_Json(2); // Работа	
-	})
-
-	document.onmouseup = clearXY;
-	document.onclick = function(event) {
-	    var target = event.target;
-	    if (target.id !='btn_rv') { // скрываем список Виды РВ
-			var dropdowns = document.getElementsByClassName("dropdown-content");
-			for (var i = 0; i < dropdowns.length; i++) {
-				var openDropdown = dropdowns[i];
-				if (openDropdown.classList.contains('rv_show')) {
-					openDropdown.classList.remove('rv_show');
-				}
-			}
-	    }
-	    if (target.id !='btn_ex' ) { // скрываем список Примеры заполнения
-			var dropdowns = document.getElementsByClassName("dropdown-content");
-			for (var i = 0; i < dropdowns.length; i++) {
-				var openDropdown = dropdowns[i];
-				if (openDropdown.classList.contains('ex_show')) {
-					openDropdown.classList.remove('ex_show');
-				}
-			}
-	    }
+		Send_Json(2); // Работа
 	}
 
 // Инициализация
-	function init_(){
+	function init(){
+
 		// сохраняем token в локальное хранилище браузера
 		localStorage.setItem('_access_token' , token);
         // восстанавливаем размеры блоков или сохраняем текущие размеры 
@@ -59,10 +44,32 @@
 
 		document.getElementById("sotr_resize").onmousedown = saveWH;
 		document.getElementById("edit_resize").onmousedown = saveWH;
+
+		document.onmouseup = clearXY;
+		document.onclick = function(event) {
+		    var target = event.target;
+		    if (target.id !='btn_rv') { // скрываем список Виды РВ
+				var dropdowns = document.getElementsByClassName("dropdown-content");
+				for (var i = 0; i < dropdowns.length; i++) {
+					var openDropdown = dropdowns[i];
+					if (openDropdown.classList.contains('rv_show')) {
+						openDropdown.classList.remove('rv_show');
+					}
+				}
+		    }
+		    if (target.id !='btn_ex' ) { // скрываем список Примеры заполнения
+				var dropdowns = document.getElementsByClassName("dropdown-content");
+				for (var i = 0; i < dropdowns.length; i++) {
+					var openDropdown = dropdowns[i];
+					if (openDropdown.classList.contains('ex_show')) {
+						openDropdown.classList.remove('ex_show');
+					}
+				}
+		    }
+		}
         document.getElementById('textarea').value = "";
 		document.getElementById("textarea").focus();
 	}
-
 
 // Обработчики кнопок 
 
@@ -98,7 +105,7 @@
 	  document.getElementById("exDropdown").classList.toggle("ex_show");
 	}
 
-// Выбор месяца
+	// Выбор месяца
     function OnSel_month (select) {
 		document.getElementById('sotr').innerHTML = '';
 		document.getElementById("btn_load").style.display = 'none';
@@ -130,10 +137,10 @@
 
 // Выбор примера заполнения
     function OnSel_ex (select) {
+		document.getElementById('textarea').value ='';
+		document.getElementById('sotr').innerHTML = '';
 		var ar =sample_array [select].split('~');
 		if (ar[0]!='0'){
-			document.getElementById('textarea').value ='';
-			document.getElementById('sotr').innerHTML = '';			
 			for (var i = 2; i < ar.length; ++i) {
 				document.getElementById('textarea').value += ar[i]+'\n';
 			}
@@ -174,7 +181,7 @@
 
 	function clearXY() {document.onmousemove = null;}
 
-// Изменение ширины и высоты блоков и сохранение значений в хранилище
+// Меняем ширину и высоту блоков и сохраняем в хранилище
 	function resizeBlock(e) {
 		var point = getXY(e);
 		new_w = d_w + point[0]; 
@@ -199,6 +206,8 @@
 
 	function Send_Json(ee){
 
+		document.getElementById('textarea').focus();
+		if (!navigator.onLine) {alert('Отсутствует интернет подключение');return;}
 		document.getElementById("svg").style.display = 'block';
 		document.getElementById("lb").innerHTML = msg_default;
 
@@ -276,7 +285,7 @@
 						}
 				}
 
-				if (ee == 2){  // Заполнение таблицы сотрудников 
+				if (ee == 2){  // Заполнение таблицы табеля на форме
 
 					function nCell(e0,e1,e2,e3){ // установка класса ячейки таблицы
 						var newCell = newRow.insertCell(e0);
