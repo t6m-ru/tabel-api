@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8">
+		<title>Табель 2019 API</title>
+		<link rel="stylesheet" media="screen" href="./styles.css" >
+		<script src="./script.js" type="text/javascript"></script>
+	</head>
+<body>
+	<div id="wrap">
+		<header>
+			<h2>Табель учета рабочего времени 2019 (API клиент)</h2>
+			<label id='check_info' class="api_info"></label>
+		</header>
+		<main>
+			<div id="top">
+					<ul>
+					  <li style="width:110px;" >
+						  <select id="m" class="sel-css" onchange="OnSel_month (this)">
+							<option selected value="1">Январь</option><option value ="2">Февраль</option><option value ="3">Март</option><option value ="4">Апрель</option><option value ="5">Май</option><option value ="6">Июнь</option><option value ="7">Июль</option><option value ="8">Август</option><option value ="9">Сентябрь</option><option value ="10">Октябрь</option><option value ="11">Ноябрь</option><option value ="12">Декабрь</option>                
+						 </select>
+						 </li>
+					  <li style="width:210px;">
+					  	<select id="doc" class="sel-css" onchange="OnSel_doc (this)" ></select>
+					 </li>
+					  <li style="width:50px;">
+						<button id="button" class="button run" onclick="Btn_run();return false;" title = "Сформировать документ"></button>
+					  </li>
+					  <li style="width:60px;">
+							<div id ="svg" style="display: none;"></div>
+					  </li>
+					  <li style="width:225px;">
+						  <label style="float:left;margin: 9px;">Данные:</label>
+			  					<button id="btn_save" class="button save" onclick="Btn_save();return false;" title = "Сохранить в архив"></button>
+								<button id="btn_load" class="button load" onclick="Btn_load();return false;" title = "Восстановить из архива"></button>
+								<button id="btn_clr" class="button clr" onclick="Btn_clear();return false;" title = "Очистить"></button>
+					  </li>
+					  <li style="width:100px;padding-right:15px;float:right">
+						<div class="dropdown">
+							<button id ="btn_rv" class="button rv"  onclick="Btn_rv();return false;"  title = "Виды рабочего времени" >?</button>
+							<div id="rvDropdown" class="dropdown-content"></div>							
+							<button id ="btn_ex" class="button ex"  onclick="Btn_ex();return false;"  title = "Примеры заполнения табеля" >=</button>
+							<div id="exDropdown" class="dropdown-content"></div>
+						</div> 						  
+					  </li>
+					</ul>
+			</div>
+			<div class ="clear" ></div>	
+			<div id ="clnd"></div>
+			<div id ="sotr"></div>
+			<div id ="sotr_resize"></div>
+			<div id ="edit">
+				<div id ="info" class="info"><label id="lb" style="padding:10px;" ></label></div>
+				<textarea type="text" id="textarea" onkeydown= "KJ(event)"  required title="Нажмите клавишу ESC для расчета" ></textarea>
+			</div>
+			<div id="edit_resize"></div>
+		</main>
+		<footer>
+		  <small><a href="http://www.t6m.ru" title="Считаем время www.t6m.ru" style="color: #606464;text-decoration: none;">©Le 2019 </a></small>
+		</footer>
+	</div>
+</body>
+</html>
