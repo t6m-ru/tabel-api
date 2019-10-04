@@ -41,7 +41,7 @@ API клиент - инструмент для подготовки , расче
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-X POST \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0"\
+	-d "ver=1.0" \
 	-d "mode=0" 
 
 	Ответ сервера JSON файл: 
@@ -53,7 +53,7 @@ API клиент - инструмент для подготовки , расче
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-X POST \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0"\
+	-d "ver=1.0" \
 	-d "mode=1" 
 
 	Ответ сервера JSON файл :
@@ -68,7 +68,7 @@ API клиент - инструмент для подготовки , расче
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-X POST \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0"\
+	-d "ver=1.0" \
 	-d "mode=2" \
 	-d "m=1" \
    	--data-urlencode 'cart={"s":["1=/5"]}'
@@ -85,7 +85,7 @@ API клиент - инструмент для подготовки , расче
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-X POST \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0"\
+	-d "ver=1.0" \
 	-d "mode=3" \
 	-d "m=10" \
 	--data-urlencode 'cart={"s":["1=/5"]}'
@@ -98,7 +98,7 @@ API клиент - инструмент для подготовки , расче
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-X POST \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0"\
+	-d "ver=1.0" \
 	-d "mode=4" \
 	-d "m=10" \
 	--data-urlencode 'cart={"s":["1=/5"]}'
