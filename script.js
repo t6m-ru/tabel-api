@@ -388,10 +388,11 @@
 				    a.remove(); // удаление ссылки на скачивание
 				}
 			}
-		};
 				document.getElementById("svg").style.display = 'none';
 				document.getElementById("button").disabled = false;
-				document.getElementById("textarea").focus();
+				document.getElementById("textarea").focus();			
+		};
+
 	}
 
 // Обработка ошибок
