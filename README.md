@@ -3,7 +3,7 @@
 API клиент - инструмент для подготовки , расчета и формирования файла табеля Excel по ф.Т13.
 <p>
     <a href="">
-        <img src="https://img.shields.io/badge/version-1.0-brightgreen.svg?style=flat-square" alt="Version">
+        <img src="https://img.shields.io/badge/version-1.1-brightgreen.svg?style=flat-square" alt="Version">
     </a>
 </p>
 
@@ -44,12 +44,11 @@ API клиент - инструмент для подготовки , расче
 
 Для обращения к API необходимо сделать POST-запрос 
 	
-	curl "http://t6m.ru/api/" -H "Content-Type: application/x-www-form-urlencoded" -X POST 
+	curl "http://t6m.ru/api/v1.1/" -H "Content-Type: application/x-www-form-urlencoded" -X POST 
 	
 c указанием параметров:
 
 	access_token 	-токен
-	ver=1.0		- версия API
 	mode 		- Режим работы :
 				0-Авторизация,
 				1-Инициализация,
@@ -66,37 +65,34 @@ c указанием параметров:
 
 ### Авторизация
 
-	curl "http://t6m.ru/api/" -H "Content-Type: application/x-www-form-urlencoded" -X POST \
+	curl "http://t6m.ru/api/v1.1/" -H "Content-Type: application/x-www-form-urlencoded" \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0" \
 	-d "mode=0" 
 
 #### Ответ 
 
 Параметр | Тип      | Варианты            |Описание 
 ---------|----------|---------------------|----------
-info     | строка   | ОК ,Тестовый доступ | доступ к сервису
+info     | string   | ОК ,v1.1            | доступ к сервису
 
 ### Инициализация
 
-	curl "http://t6m.ru/api/" -H "Content-Type: application/x-www-form-urlencoded" -X POST \
+	curl "http://t6m.ru/api/v1.1/" -H "Content-Type: application/x-www-form-urlencoded" \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0" \
 	-d "mode=1" 
 #### Ответ 
 
 Параметр | Тип      |  Описание 
 ---------|----------|--------------
-samples  | массив   | примеры заполнения табеля 
-docs     | массив   | доступные документы 
-rv       | массив   | виды рабочего времени  
+samples  | array    | примеры заполнения табеля 
+docs     | array    | доступные документы 
+rv       | array    | виды рабочего времени  
 
 
 ### Работа
 
-	curl "http://t6m.ru/api/" -H "Content-Type: application/x-www-form-urlencoded" -X POST \
+	curl "http://t6m.ru/api/v1.1/" -H "Content-Type: application/x-www-form-urlencoded" \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0" \
 	-d "mode=2" \
 	-d "m=1" \
    	--data-urlencode 'cart={"s":["1=/5"]}'
@@ -105,60 +101,37 @@ rv       | массив   | виды рабочего времени
 
 Параметр | Тип      |  Описание 
 ---------|----------|--------------
-clnd     | строка   | календарь на месяц
-calc     | массив   | итоги по сотрудникам
-table    | массив   | данные для заполнения таблицы табеля  
+clnd     | string   | календарь на месяц
+calc     | array    | итоги по сотрудникам
+table    | array    | данные для заполнения таблицы табеля  
 
 
 ### Табель ф.Т13 за месяц
 
-	curl "http://t6m.ru/api/" \
+	curl "http://t6m.ru/api/v1.1/" \
 	-H "Content-Type: application/x-www-form-urlencoded" \
-	-X POST \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0" \
 	-d "mode=3" \
 	-d "m=10" \
 	--data-urlencode 'cart={"s":["1=/5"]}'
 
 #### Ответ 
 
-  	Cсылка для скачивания файла : http://t6m.ru/api/Files/89f....37_Tabel_2019_10.xls
+  	Cсылка для скачивания файла : http://t6m.ru/api/v1.1/Files/89f....37_Tabel_2019_10.xls
 
 ### Табель ф.Т13 за 1/2 месяца
 
-	curl "http://t6m.ru/api/" \
+	curl "http://t6m.ru/api/v1.1/" \
 	-H "Content-Type: application/x-www-form-urlencoded" \
-	-X POST \
 	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" \
-	-d "ver=1.0" \
 	-d "mode=4" \
 	-d "m=10" \
 	--data-urlencode 'cart={"s":["1=/5"]}'
 
 #### Ответ 
 
-	Ccылка для скачивания файла  : http://t6m.ru/api/Files/89f.....47_Tabel_2019_10_1_2_.xls
+	Ccылка для скачивания файла  : http://t6m.ru/api/v1.1/Files/89f.....47_Tabel_2019_10_1_2_.xls
 
-
-
-### Получить файл табеля Excel , используя только командную строку
-
-Измените значения параметров   
-
-	-d "mode=3"    3- Табель, 4-Табель за 1/2 месяца
-	-d "m=10"     10 - Месяц
-	--data-urlencode 'cart={"s":[ "1=/5 +1 10 ОТ","2=10 +1 10 У + 11 20 К","3=11 +1 10 ОТ","4=/6 + 12 20 К"]}' 
-
-Выполните запрос  
-
-	curl "http://t6m.ru/api/" -H "Content-Type: application/x-www-form-urlencoded" -X POST  \
-	-d "access_token=a50a6fe31dcfc65942211faf7dd66cf27043f877" -d "ver=1.0" \
-	-d "mode=3" \
-	-d "m=10" \
-	--data-urlencode 'cart={"s":[ "1=/5 +1 10 ОТ","2=10 +1 10 У + 11 20 К","3=11 +1 10 ОТ","4=/6 + 12 20 К"]}' \
-	| sed 's/\"//g' \
-	| curl -O `xargs echo -e`
 
 ##  Контакты , информация  
 
