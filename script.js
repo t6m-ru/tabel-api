@@ -1,10 +1,9 @@
     var token = 'a50a6fe31dcfc65942211faf7dd66cf27043f877'; //Тестовый токен
 
-    var api_server = 'http://t6m.ru/api/';   // сервер API
-    var api_version = '1.0';   //Текущая Версия api
-    
+    var api_server = 'http://t6m.ru/api/v1.1/';   // сервер API
 	var msg_default = 'Введите данные о работе сотрудников '; // строка инфо по умолчанию 
-	var txt_default = '1=/5'; // заполнение режима работы по умолчанию 
+	var txt_default = "1 Иванов= /5 + 1 10 ОТ\n2 Петров= 4.2\n3 Сидоров= 10 + 10 20 ОТ + 21 24 ОД\n4 Николаев= 5 * + 14 18 К +20 26 У" ; // заполнение режима работы по умолчанию 
+	var txt_clear  = "1=\n2=\n3=\n4=\n5=\n6=" ; // заполнение режима работы по умолчанию 
 	
 	var d_w = 0;  // дельта  ширина блока wrap
 	var d_h = 0;  // дельта  высота блока sotr
@@ -85,7 +84,7 @@
 		}
 	}
 	function Btn_clear() {
-			document.getElementById('textarea').value= '';
+			document.getElementById('textarea').value= txt_clear;
 			Send_Json(2);
 	}
 
@@ -107,7 +106,7 @@
 			document.getElementById("btn_load").style.display = 'block';
 		    document.getElementById('textarea').value= data_a;
 		}else{
-			document.getElementById('textarea').value = txt_default;
+			document.getElementById('textarea').value = txt_clear;
 		}
 		Send_Json(2);
 		document.getElementById("lb").innerHTML = msg_default;
@@ -194,205 +193,219 @@
 		localStorage.setItem('SW', new_w);
  }
 
-
 // 	Запрос к серверу и обработка ответа 
 
 	function Send_Json(ee){
 
 		document.getElementById("svg").style.display = 'block';
 		document.getElementById("lb").innerHTML = msg_default;
-
-		var xhr = new XMLHttpRequest();
 		access_token = localStorage.getItem('_access_token');
+		const regEx = /[^\d\+*]/g;
 		var month_v =document.getElementById("m").value;
-		var cart_v = JSON.stringify({s:(((document.getElementById('textarea').value).replace(/\n+/g,'\n')).split('\n')).filter(element => element !== '')});
-		var b = ( ee < 2 )? 'access_token='+access_token +'&ver=' + api_version+'&mode=' + ee  :'access_token='+access_token+'&ver=' + api_version+'&mode=' + ee +'&m=' + month_v + '&cart=' + encodeURIComponent(cart_v);
-		xhr.open("POST", api_server, true);
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
-		xhr.send(b);
-
-		xhr.onload = function(e1) {
-			if (xhr.status != 200) {
-				document.getElementById("svg").style.display = 'none';
-				document.getElementById("button").disabled = false;
-				document.getElementById("textarea").focus();
-				alert( 'Ошибка запроса : ' + xhr.status);
-				return;
-			}else {
-				var data = JSON.parse(xhr.response);
-
-				if (ee == 0) { // Авторизация
-						if (data.info.substring(0,1) !='*') {
-							document.getElementById("check_info").innerHTML = data.info + ' (API v.'+ api_version +')';
-							document.getElementById("lb").innerHTML = msg_default;
-						} else {
-							document.getElementById("check_info").innerHTML = 'API v.' +api_version ; 
-						}
-				}
-				if (ee == 1) { // Инициализация
-
-							sample_array =data.samples;  // Загрузка примеров
-							var div = document.getElementById('exDropdown');
-							for (var i = 0; i < sample_array.length; ++i) {
-								var e    = document.createElement('a');
-								ar =sample_array [i].split('~');
-								e.setAttribute('onclick', "OnSel_ex("+i+");return false;") ;
-								e.setAttribute('class', 'st'+ar[0]) ;
-								e.appendChild(document.createTextNode(ar[1]));
-								div.appendChild(e);
-							}
-							doc_array =data.docs; // Загрузка списка документов
-						    var select2 = document.getElementById( 'doc');
-							for (var i = 0; i < doc_array.length; ++i) {
-							    ar =doc_array [i].split('~');
-						        select2.add(new Option(ar[1],ar[0])) ;
-						    }
-
-						    rv_array=data.rv; // Загрузка видов РВ
-						    var div = document.getElementById('rvDropdown');
-							for (var i = 0; i < rv_array.length; ++i) {
-								var e    = document.createElement('a');
-								ar =rv_array[i].split('~');
-								e.setAttribute('onclick', "OnSel_rv("+i+");return false;") ;
-								e.appendChild(document.createTextNode(ar[1]));
-								e.setAttribute('class', 'st'+ar[0]) ;
-								div.appendChild(e);
-							}
-				}
-
-				if (ee >1)
-				{ // Информация о текущем состоянии или ошибке
-						if (data.info != undefined) {
-							if (data.info.substring(0,1) =='*') {
-								document.getElementById("lb").innerHTML = data.info.substring(1,100);
-								document.getElementById("sotr").innerHTML = '';
-								document.getElementById("svg").style.display = 'none';
-								document.getElementById("button").disabled = true;
-								document.getElementById("textarea").focus();
-								return;
-							} else {
-								 document.getElementById("lb").innerHTML = data.info;
-							}
-						}
-				}
-
-				if (ee == 2){  // Заполнение таблицы сотрудников 
-
-					function nCell(e0,e1,e2,e3){ // установка класса ячейки таблицы
-						var newCell = newRow.insertCell(e0);
-						newCell.innerHTML= e2 ;
-						if (e1=="a0"){
-							cc='c'+e3;
-							newCell.className = cc ;
-						} else if (e1=="a01") {
-							cc='c0'+e3;
-							newCell.className = cc ;
-						} else {
-							newCell.className=e1;
-						}
-					}
-					var mount= document.getElementById("m").value;
-					var date = new Date(2019, (mount-1), 1);
-					var days = ['ВС', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'СБ']; //дни недели
-					var day = date.getDay(date); // День недели 1 числа текущего месяца
-                    var dm = data.clnd.length; // кол-во дней в мес
-                    var color_=data.clnd ;     //  дни месяца цвет
-					var dn_data  = []; // массив данных работы сотрудника по дням месяца
-					var r_data  = [];  // массив результатов расчета сотрудника за месяц
-
-					for (var i = 0; i < data.table.length; i++) { 
-						sk = data.table[i].split(',');
-						sk_=sk[1];
-						if (sk[2] != '') sk_=sk_+"<br />"+sk[2];
-						if (sk[3] != '') sk_=sk_+"<br />"+sk[3];
-						dn_data[sk[0]] = sk_; //
-					}
-
-					for ( var i = 0; i < data.calc.length; i++ )	r_data[i] = data.calc[i].split(','); 
-
-					var newElemC=document.createElement("table"); // Календарь
-						newElemC.style.border = "1px solid #a1abab";
-						newElemC.style.fontSize = "10px";
-						newElemC.style.textAlign = "center";
-						newElemC.width = "100%";
-						newElemC.style.tableLayout = "fixed";
-
-					var newElem=document.createElement("table"); // Сотрудники
-						newElem.style.border = "1px solid #a1abab";
-						newElem.style.fontSize = "10px";
-						newElem.style.textAlign = "center";
-						newElem.width = "100%";
-						newElem.style.tableLayout = "fixed";
-
-   				    var pCell = 0;
-					for( var j = 0; j < (data.calc.length+2); j++ ){
-					    var newRow= (j<2)? newElemC.insertRow(j) :newElem.insertRow(j-2);
-					    var tCell = 0; 
-					    if (j==0) nCell(0,"a11","","");
-					    if (j==1) nCell(0,"a11","Дни <br />месяца","");
-					    if (j>1)  nCell(0,"a1",("Сотр_"+(j-1)),"");
-
-						for( var i = 1; i <= data.clnd.length; i++ ){
-	                        if (j==0) nCell(i,"a01",days[day],color_[tCell],"");
-	                        if (j==1) nCell(i,"a01",i,color_[tCell],"");
-	                        if (j>1) {
-								nCell(i,"a0",(typeof dn_data[pCell] === 'undefined') ? "":dn_data[pCell],color_[tCell],"");
-								pCell++;
-							}
-							tCell++;
-							if (tCell == dm) tCell=0;
-							day++; if (day > 6) day=0;
-						}
-
-					    if (j==0) {
-							nCell(dm+1,"a3","","");
-							nCell(dm+2,"a3","","");
-							nCell(dm+3,"a3","","");
-							nCell(dm+4,"a3","","");
-							nCell(dm+5,"a4","Нея","");
-						 }
-						if (j==1) {
-							nCell(dm+1,"a3","Дн <br />Час","");
-							nCell(dm+2,"a3","Ноч","");
-							nCell(dm+3,"a3","Пр","");
-							nCell(dm+4,"a3","СвУр","");
-							nCell(dm+5,"a3","Дни","");
-						 }
-						if (j>1) {
-	 						nCell(dm+1,"a2",(r_data[j-2][0] +"<br />"+ r_data[j-2][1]),"");
-							nCell(dm+2,"a2",r_data[j-2][2],"");
-							nCell(dm+3,"a2",r_data[j-2][3],"");
-							nCell(dm+4,"a2",r_data[j-2][4],"");
-							nCell(dm+5,"a4",r_data[j-2][5],"");
-						}
-					}
-				    var elem1 = document.getElementById('clnd');
-				    elem1.innerHTML = '';
-   					var newTable = elem1.append(newElemC);
-
-				    var elem = document.getElementById('sotr');
-				    elem.innerHTML = '';
-   					var newTable = elem.append(newElem);
-				   	elem1.style.overflowY = (elem.scrollHeight !=elem.offsetHeight)? 'scroll' :'hidden';
-
-				}
-				if ( ee >2 )  { // Получение ссылки и скачивание файла 
-					var data = JSON.parse(xhr.response);
-				    var div = document.getElementById('info');
-					var a    = document.createElement('a');
-				    a.href = data;
-				    document.getElementById("lb").innerHTML = '';
-				    a.appendChild(document.createTextNode(' Скачать файл '));
-				    div.appendChild(a);
-					a.click();  // скачивание файла 
-				    a.remove(); // удаление ссылки на скачивание
+		var ss = [];
+		var ww = document.getElementById('textarea').value.replace(/\n+/g,'\n').split('\n').filter(element => element !== ''); //textarea в массив
+		for (var i=0, len=ww.length; i<len; i++) {
+   			if (ww[i][0] !='+'){
+				var sk = ww[i].split('=');
+					ss.push(sk[0].replace(regEx,'')+"="+sk[1]); // удаляем фамилии 
+				}else{
+					ss.push(ww[i]); // строку справочника не изменяем
 				}
 			}
-				document.getElementById("svg").style.display = 'none';
-				document.getElementById("button").disabled = false;
-				document.getElementById("textarea").focus();			
-		};
 
+		const requestData = {};
+				requestData.access_token = access_token;
+				requestData.mode = ee;
+				if (ee >1) {
+					requestData.m = month_v;
+					requestData.cart = JSON.stringify({s:ss});
+				}
+			const usersPromise = fetch(api_server, {
+			method : 'POST',
+			headers: {
+            'Content-Type': 'application/json;charset=utf-8'    
+			},
+			cache: 'no-cache',
+			body : JSON.stringify(requestData)
+				}).then(response => {
+									if (!response.ok) {
+											document.getElementById("svg").style.display = 'none';
+											document.getElementById("button").disabled = false;
+											document.getElementById("textarea").focus();
+											alert( 'Ошибка запроса : ' + xhr.status);
+											return;	
+									}
+								  return response.json();
+					}).then(responseData => {
+
+						if (ee == 0) { // Авторизация
+								if (responseData.info.substring(0,1) !='*') {
+									document.getElementById("check_info").innerHTML = responseData.info;
+									document.getElementById("lb").innerHTML = msg_default;
+								} else {
+									document.getElementById("check_info").innerHTML = 'v.1.1'; 
+								}
+						}
+						if (ee == 1) { // Инициализация
+									sample_array =responseData.samples;  // Загрузка примеров
+									var div = document.getElementById('exDropdown');
+									for (var i = 0; i < sample_array.length; ++i) {
+										var e    = document.createElement('a');
+										ar =sample_array [i].split('~');
+										e.setAttribute('onclick', "OnSel_ex("+i+");return false;") ;
+										e.setAttribute('class', 'st'+ar[0]) ;
+										e.appendChild(document.createTextNode(ar[1]));
+										div.appendChild(e);
+									}
+									doc_array =responseData.docs; // Загрузка списка документов
+								    var select2 = document.getElementById( 'doc');
+									for (var i = 0; i < doc_array.length; ++i) {
+									    ar =doc_array [i].split('~');
+								        select2.add(new Option(ar[1],ar[0])) ;
+								    }
+		
+								    rv_array=responseData.rv; // Загрузка видов РВ
+								    var div = document.getElementById('rvDropdown');
+									for (var i = 0; i < rv_array.length; ++i) {
+										var e    = document.createElement('a');
+										ar =rv_array[i].split('~');
+										e.setAttribute('onclick', "OnSel_rv("+i+");return false;") ;
+										e.appendChild(document.createTextNode(ar[1]));
+										e.setAttribute('class', 'st'+ar[0]) ;
+										div.appendChild(e);
+									}
+						}
+						if (ee >1)
+						{ // Информация о текущем состоянии или ошибке
+								if (responseData.info != undefined) {
+									if (responseData.info.substring(0,1) =='*') {
+										document.getElementById("lb").innerHTML = responseData.info.substring(1,100);
+										document.getElementById("sotr").innerHTML = '';
+										document.getElementById("svg").style.display = 'none';
+										document.getElementById("button").disabled = true;
+										document.getElementById("textarea").focus();
+										return;
+									} else {
+										 document.getElementById("lb").innerHTML = responseData.info;
+									}
+								}
+								}		
+						if (ee == 2){  // Заполнение таблицы сотрудников 
+		
+							function nCell(e0,e1,e2,e3){ // установка класса ячейки таблицы
+								var newCell = newRow.insertCell(e0);
+								newCell.innerHTML= e2 ;
+								if (e1=="a0"){
+									cc='c'+e3;
+									newCell.className = cc ;
+								} else if (e1=="a01") {
+									cc='c0'+e3;
+									newCell.className = cc ;
+								} else {
+									newCell.className=e1;
+								}
+							}
+							var mount= document.getElementById("m").value;
+							var date = new Date(2019, (mount-1), 1);
+							var days = ['ВС', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'СБ']; //дни недели
+							var day = date.getDay(date); // День недели 1 числа текущего месяца
+		                    var dm = responseData.clnd.length; // кол-во дней в мес
+		                    var color_=responseData.clnd ;     //  дни месяца цвет
+							var dn_data  = []; // массив данных работы сотрудника по дням месяца
+							var r_data  = [];  // массив результатов расчета сотрудника за месяц
+		
+							for (var i = 0; i < responseData.table.length; i++) { 
+								sk = responseData.table[i].split(',');
+								sk_=sk[1];
+								if (sk[2] != '') sk_=sk_+"<br />"+sk[2];
+								if (sk[3] != '') sk_=sk_+"<br />"+sk[3];
+								dn_data[sk[0]] = sk_; //
+							}
+		
+							for ( var i = 0; i < responseData.calc.length; i++ )	r_data[i] = responseData.calc[i].split(','); 
+		
+							var newElemC=document.createElement("table"); // Календарь
+								newElemC.style.border = "1px solid #a1abab";
+								newElemC.style.fontSize = "10px";
+								newElemC.style.textAlign = "center";
+								newElemC.width = "100%";
+								newElemC.style.tableLayout = "fixed";
+		
+							var newElem=document.createElement("table"); // Сотрудники
+								newElem.style.border = "1px solid #a1abab";
+								newElem.style.fontSize = "10px";
+								newElem.style.textAlign = "center";
+								newElem.width = "100%";
+								newElem.style.tableLayout = "fixed";
+		
+		   				    var pCell = 0;
+							for( var j = 0; j < (responseData.calc.length+2); j++ ){
+							    var newRow= (j<2)? newElemC.insertRow(j) :newElem.insertRow(j-2);
+							    var tCell = 0; 
+							    if (j==0) nCell(0,"a11","","");
+							    if (j==1) nCell(0,"a11","Дни <br />месяца","");
+							    if (j>1)  nCell(0,"a1",("Сотр_"+(j-1)),"");
+		
+								for( var i = 1; i <= responseData.clnd.length; i++ ){
+			                        if (j==0) nCell(i,"a01",days[day],color_[tCell],"");
+			                        if (j==1) nCell(i,"a01",i,color_[tCell],"");
+			                        if (j>1) {
+										nCell(i,"a0",(typeof dn_data[pCell] === 'undefined') ? "":dn_data[pCell],color_[tCell],"");
+										pCell++;
+									}
+									tCell++;
+									if (tCell == dm) tCell=0;
+									day++; if (day > 6) day=0;
+								}
+		
+							    if (j==0) {
+									nCell(dm+1,"a3","","");
+									nCell(dm+2,"a3","","");
+									nCell(dm+3,"a3","","");
+									nCell(dm+4,"a3","","");
+									nCell(dm+5,"a4","Нея","");
+								 }
+								if (j==1) {
+									nCell(dm+1,"a3","Дн <br />Час","");
+									nCell(dm+2,"a3","Ноч","");
+									nCell(dm+3,"a3","Пр","");
+									nCell(dm+4,"a3","СвУр","");
+									nCell(dm+5,"a3","Дни","");
+								 }
+								if (j>1) {
+			 						nCell(dm+1,"a2",(r_data[j-2][0] +"<br />"+ r_data[j-2][1]),"");
+									nCell(dm+2,"a2",r_data[j-2][2],"");
+									nCell(dm+3,"a2",r_data[j-2][3],"");
+									nCell(dm+4,"a2",r_data[j-2][4],"");
+									nCell(dm+5,"a4",r_data[j-2][5],"");
+								}
+							}
+						    var elem1 = document.getElementById('clnd');
+						    elem1.innerHTML = '';
+		   					var newTable = elem1.append(newElemC);
+		
+						    var elem = document.getElementById('sotr');
+						    elem.innerHTML = '';
+		   					var newTable = elem.append(newElem);
+						   	elem1.style.overflowY = (elem.scrollHeight !=elem.offsetHeight)? 'scroll' :'hidden';
+						}
+				
+						if ( ee >2 )  { // Получение ссылки и скачивание файла 
+						    var div = document.getElementById('info');
+							var a    = document.createElement('a');
+						    a.href = responseData.url;
+						    document.getElementById("lb").innerHTML = '';
+						    a.appendChild(document.createTextNode(' Скачать файл '));
+						    div.appendChild(a);
+							a.click();  // скачивание файла 
+						    a.remove(); // удаление ссылки на скачивание
+						}
+
+						document.getElementById("svg").style.display = 'none';
+						document.getElementById("button").disabled = false;
+						document.getElementById("textarea").focus();			
+						return responseData;
+					});
 	}
 
 // Обработка ошибок

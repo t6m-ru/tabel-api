@@ -40,7 +40,7 @@ li { display: inline-block;  list-style: none;  vertical-align: middle; height:5
 .c3{background:#d2d2d2;width:20px;}/*Воскресенье*/
 .c4{background:#fb2626;width:20px;color: #f9f5f5;}/*Праздник*/
 
-.api_info{color:#d45252;font-size:11px;	margin:-35px 25px 0 0;float:right;}
+.api_info{color: #606464;font-size:11px;	margin:-35px 25px 0 0;float:right;}
 .clear{width:100%;height:1px;clear:both;}
 .info {width:100%;height:20px;background-color: #fdffdf;font-size:12px;} 
 
