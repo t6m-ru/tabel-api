@@ -15,12 +15,17 @@
 		<main>
 			<div id="top">
 					<ul>
-					  <li style="width:110px;" >
+					  <li style="width:90px;" >
 						  <select id="m" class="sel-css" onchange="OnSel_month (this)">
 							<option selected value="1">Январь</option><option value ="2">Февраль</option><option value ="3">Март</option><option value ="4">Апрель</option><option value ="5">Май</option><option value ="6">Июнь</option><option value ="7">Июль</option><option value ="8">Август</option><option value ="9">Сентябрь</option><option value ="10">Октябрь</option><option value ="11">Ноябрь</option><option value ="12">Декабрь</option>                
 						 </select>
 						 </li>
-					  <li style="width:210px;">
+					  <li style="width:150px;" >
+						  <select id="u" class="sel-css" onchange="OnSel_u (this)" >
+							<option selected value="1">Администрация</option><option value ="2">Бухгалтерия</option><option value ="3">Магазин</option><option value ="4">Склад</option><option value ="5">Охрана</option>
+						 </select>
+					 </li>
+					  <li style="width:175x;">
 					  	<select id="doc" class="sel-css" onchange="OnSel_doc (this)" ></select>
 					 </li>
 					  <li style="width:50px;">
@@ -35,13 +40,14 @@
 								<button id="btn_load" class="button load" onclick="Btn_load();return false;" title = "Восстановить из архива"></button>
 								<button id="btn_clr" class="button clr" onclick="Btn_clear();return false;" title = "Очистить"></button>
 					  </li>
-					  <li style="width:170px;float:right">
+					  <li style="width:220px;float:right">
 						<div class="dropdown">
 							<a href="http://www.t6m.ru/download/manual.pdf" title="Инструкция по заполнению табеля" style="color: #606464;float: left; margin: 10px;">Справка</a>
 							<button id ="btn_rv" class="button rv"  onclick="Btn_rv();return false;"  title = "Виды рабочего времени" >v</button>
 							<div id="rvDropdown" class="dropdown-content"></div>							
 							<button id ="btn_ex" class="button ex"  onclick="Btn_ex();return false;"  title = "Примеры заполнения табеля" >=</button>
 							<div id="exDropdown" class="dropdown-content"></div>
+  						    <button id ="btn_u" class="button unit"  onclick="Btn_u();return false;"  title = "Настройка списка подразделений" ></button>
 						</div> 						  
 					  </li>
 					</ul>

@@ -2,14 +2,16 @@
 
     var api_server = 'http://t6m.ru/api/v1.1/';   // сервер API
 	var msg_default = 'Введите данные о работе сотрудников '; // строка инфо по умолчанию 
-	var txt_default = "1 Иванов= /5 + 1 10 ОТ\n2 Петров= 4.2\n3 Сидоров= 10 + 10 20 ОТ + 21 24 ОД\n4 Николаев= 5 * + 14 18 К +20 26 У" ; // заполнение режима работы по умолчанию 
-	var txt_clear  = "1=\n2=\n3=\n4=\n5=\n6=" ; // заполнение режима работы по умолчанию 
+	var txt_default = "Иванов= /5 + 1 10 ОТ\nПетров= 4.2\n= 10 + 10 20 ОТ + 21 24 ОД\nНиколаев= 5 + 14 18 К +20 26 У" ; // заполнение режима работы по умолчанию 
+	var txt_clear  = "Иванов=\n=\n=\n=\n=\n=" ; // заполнение режима работы по умолчанию 
 	
 	var d_w = 0;  // дельта  ширина блока wrap
 	var d_h = 0;  // дельта  высота блока sotr
 	var d_eh = 0; // дельта  высота блока edit
     
     var sample_array =[]; //массив примеров
+
+	var edit_mode =0; // 1 - режим редактирования подразделений 
 
 	document.addEventListener('DOMContentLoaded', function(){
 		if (!navigator.onLine) {alert('Отсутствует интернет подключение');return;}
@@ -56,6 +58,19 @@
 		var E_H = localStorage.getItem('EH');
 		if (E_H == null) {E_H =  document.getElementById("edit").offsetHeight;localStorage.setItem('EH', E_H);} else {document.getElementById("edit").style.height = E_H + "px"; E_H =E_H - 50; document.getElementById("textarea").style.height = E_H + "px"; }
 
+        // восстанавливаем список подразделений из локального хранилища
+   		var getItem = localStorage.getItem('2019_unit');
+   		if (getItem != null) {
+				var sel = document.getElementById('u');
+				while (sel.options.length) {
+					sel.options[0] = null;
+				}
+				var ar =getItem.split(',');
+				for (var i = 0; i < ar.length; ++i) {
+				    sel.add(new Option(ar[i],i+1)) ;
+			    }
+		}
+
 		document.getElementById("sotr_resize").onmousedown = saveWH;
 		document.getElementById("edit_resize").onmousedown = saveWH;
         document.getElementById('textarea').value = "";
@@ -65,19 +80,32 @@
 
 // Обработчики кнопок 
 
+	function Btn_u() {
+		var str ='';
+		var sel = document.getElementById( 'u'); 
+		document.getElementById('sotr').innerHTML = '';
+		for (var i = 0; i < sel.length; ++i) str = str + sel.options[i].text+'\n';
+
+	    document.getElementById('textarea').value= str;
+		document.getElementById("textarea").focus();
+		document.getElementById("lb").innerHTML = 'Отредактируйте список подразделений и нажмите клавишу ESC для сохранения';
+		edit_mode = 1;
+	}
+
+
 	function Btn_run() {
 		Send_Json(document.getElementById('doc').value);
 		document.getElementById("textarea").focus();
 	}
 
 	function Btn_save() {
-		localStorage.setItem('2019_' + document.getElementById("m").value, document.getElementById('textarea').value);
+		localStorage.setItem('2019_' + document.getElementById("m").value+'_'+document.getElementById("u").value, document.getElementById('textarea').value);
 		document.getElementById("btn_load").style.display = 'block';
 		document.getElementById("textarea").focus();
 	}
 
 	function Btn_load() {
-		var data_a= localStorage.getItem('2019_' + document.getElementById("m").value);
+		var data_a= localStorage.getItem('2019_' + document.getElementById("m").value+'_'+document.getElementById("u").value);
 		if (data_a!= null) {
 			document.getElementById('textarea').value= data_a;
 			Send_Json(2);
@@ -101,7 +129,7 @@
     function OnSel_month (select) {
 		document.getElementById('sotr').innerHTML = '';
 		document.getElementById("btn_load").style.display = 'none';
-		var data_a=localStorage.getItem('2019_' + document.getElementById("m").value);
+		var data_a=localStorage.getItem('2019_' + document.getElementById("m").value+'_'+document.getElementById("u").value);
 		if (data_a != null){
 			document.getElementById("btn_load").style.display = 'block';
 		    document.getElementById('textarea').value= data_a;
@@ -112,10 +140,17 @@
 		document.getElementById("lb").innerHTML = msg_default;
     }
 
+// Выбор подразделения
+    function OnSel_u (select) {
+		OnSel_month();
+		document.getElementById('textarea').focus();
+    }
+
 // Выбор документа
     function OnSel_doc (select) {
 		document.getElementById('textarea').focus();
     }
+
 
 // Выбор Вида РВ
     function OnSel_rv(select) {
@@ -145,7 +180,21 @@
 // Обработка нажатия клавиш
     function KJ(e){
 		if (e.which == 27){ // ESC
-			Send_Json(2);
+			if (edit_mode == 1){ // режим редактирования 
+				var ww = document.getElementById('textarea').value.replace(/\n+/g,'\n').split('\n').filter(element => element !== ''); //textarea в массив				
+				localStorage.setItem('2019_unit', ww);
+				var sel = document.getElementById('u');
+				while (sel.options.length) {
+					sel.options[0] = null;
+				}
+				for (var i = 0; i < ww.length; ++i) {
+				    sel.add(new Option(ww[i],i+1)) ;
+			    }
+				edit_mode =0;
+				OnSel_month();
+			}else{
+				Send_Json(2);
+			}
 		}
 	}
 
@@ -197,17 +246,21 @@
 
 	function Send_Json(ee){
 
+		edit_mode =0;
 		document.getElementById("svg").style.display = 'block';
 		document.getElementById("lb").innerHTML = msg_default;
 		access_token = localStorage.getItem('_access_token');
-		const regEx = /[^\d\+*]/g;
+		const regX = /[^А-Яа-я]/gm; // все кроме русских букв
+
 		var month_v =document.getElementById("m").value;
 		var ss = [];
+		var fio = [];
 		var ww = document.getElementById('textarea').value.replace(/\n+/g,'\n').split('\n').filter(element => element !== ''); //textarea в массив
 		for (var i=0, len=ww.length; i<len; i++) {
    			if (ww[i][0] !='+'){
 				var sk = ww[i].split('=');
-					ss.push(sk[0].replace(regEx,'')+"="+sk[1]); // удаляем фамилии 
+    				fio.push(sk[0].replace(regX,'')); // собираем fio в массив
+					ss.push("="+sk[1]); // удаляем фамилии из данных при запросе
 				}else{
 					ss.push(ww[i]); // строку справочника не изменяем
 				}
@@ -344,8 +397,13 @@
 							    var tCell = 0; 
 							    if (j==0) nCell(0,"a11","","");
 							    if (j==1) nCell(0,"a11","Дни <br />месяца","");
-							    if (j>1)  nCell(0,"a1",("Сотр_"+(j-1)),"");
-		
+							    if (j>1) {
+								    if (fio[j-2]=="") {
+										 nCell(0,"a1",("Сотр_"+(j-1)),"");  // Сотр_
+									}else{
+										 nCell(0,"a1",fio[j-2],""); // фамилия сотрудника
+									}	 
+								}
 								for( var i = 1; i <= responseData.clnd.length; i++ ){
 			                        if (j==0) nCell(i,"a01",days[day],color_[tCell],"");
 			                        if (j==1) nCell(i,"a01",i,color_[tCell],"");
