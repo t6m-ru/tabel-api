@@ -1,8 +1,9 @@
     var token = 'a50a6fe31dcfc65942211faf7dd66cf27043f877'; //Тестовый токен
 
     var api_server = 'http://t6m.ru/api/v1.1/';   // сервер API
+	var msg_start = 'Введите данные о работе сотрудников (см. Примеры заполнения)'; // строка инфо начало 
 	var msg_default = 'Введите данные о работе сотрудников '; // строка инфо по умолчанию 
-	var txt_default = "Иванов= /5 + 1 10 ОТ\nПетров= 4.2\n= 10 + 10 20 ОТ + 21 24 ОД\nНиколаев= 5 * + 14 18 К +20 26 У" ; // заполнение режима работы по умолчанию 
+	var txt_default = "Иванов= /5 + 1 10 ОТ\nПетров= 4.2 + 11 12 13=10\nСидоров= 10 + 10 20 ОТ + 21 24 ОД\nНиколаев= 5 * + 14 18 К +20 26 У" ; // заполнение режима работы по умолчанию 
 	var txt_clear  = "Иванов=\n=\n=\n=\n=\n=" ; // заполнение режима работы по умолчанию 
 	
 	var d_w = 0;  // дельта  ширина блока wrap
@@ -94,6 +95,7 @@
 
 
 	function Btn_run() {
+		document.getElementById("button").disabled = true;
 		Send_Json(document.getElementById('doc').value);
 		document.getElementById("textarea").focus();
 	}
@@ -137,7 +139,7 @@
 			document.getElementById('textarea').value = txt_clear;
 		}
 		Send_Json(2);
-		document.getElementById("lb").innerHTML = msg_default;
+		document.getElementById("lb").innerHTML = msg_start;
     }
 
 // Выбор подразделения
@@ -294,7 +296,7 @@
 						if (ee == 0) { // Авторизация
 								if (responseData.info.substring(0,1) !='*') {
 									document.getElementById("check_info").innerHTML = responseData.info;
-									document.getElementById("lb").innerHTML = msg_default;
+									document.getElementById("lb").innerHTML = msg_start;
 								} else {
 									document.getElementById("check_info").innerHTML = 'v.1.1'; 
 								}
