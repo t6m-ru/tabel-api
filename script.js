@@ -60,7 +60,7 @@
 		if (E_H == null) {E_H =  document.getElementById("edit").offsetHeight;localStorage.setItem('EH', E_H);} else {document.getElementById("edit").style.height = E_H + "px"; E_H =E_H - 50; document.getElementById("textarea").style.height = E_H + "px"; }
 
         // восстанавливаем список подразделений из локального хранилища
-   		var getItem = localStorage.getItem('2019_unit');
+   		var getItem = localStorage.getItem('2020_unit');
    		if (getItem != null) {
 				var sel = document.getElementById('u');
 				while (sel.options.length) {
@@ -101,13 +101,13 @@
 	}
 
 	function Btn_save() {
-		localStorage.setItem('2019_' + document.getElementById("m").value+'_'+document.getElementById("u").value, document.getElementById('textarea').value);
+		localStorage.setItem('2020_' + document.getElementById("m").value+'_'+document.getElementById("u").value, document.getElementById('textarea').value);
 		document.getElementById("btn_load").style.display = 'block';
 		document.getElementById("textarea").focus();
 	}
 
 	function Btn_load() {
-		var data_a= localStorage.getItem('2019_' + document.getElementById("m").value+'_'+document.getElementById("u").value);
+		var data_a= localStorage.getItem('2020_' + document.getElementById("m").value+'_'+document.getElementById("u").value);
 		if (data_a!= null) {
 			document.getElementById('textarea').value= data_a;
 			Send_Json(2);
@@ -131,7 +131,7 @@
     function OnSel_month (select) {
 		document.getElementById('sotr').innerHTML = '';
 		document.getElementById("btn_load").style.display = 'none';
-		var data_a=localStorage.getItem('2019_' + document.getElementById("m").value+'_'+document.getElementById("u").value);
+		var data_a=localStorage.getItem('2020_' + document.getElementById("m").value+'_'+document.getElementById("u").value);
 		if (data_a != null){
 			document.getElementById("btn_load").style.display = 'block';
 		    document.getElementById('textarea').value= data_a;
@@ -184,7 +184,7 @@
 		if (e.which == 27){ // ESC
 			if (edit_mode == 1){ // режим редактирования 
 				var ww = document.getElementById('textarea').value.replace(/\n+/g,'\n').split('\n').filter(element => element !== ''); //textarea в массив				
-				localStorage.setItem('2019_unit', ww);
+				localStorage.setItem('2020_unit', ww);
 				var sel = document.getElementById('u');
 				while (sel.options.length) {
 					sel.options[0] = null;
@@ -361,7 +361,7 @@
 								}
 							}
 							var mount= document.getElementById("m").value;
-							var date = new Date(2019, (mount-1), 1);
+							var date = new Date(2020, (mount-1), 1);
 							var days = ['ВС', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'СБ']; //дни недели
 							var day = date.getDay(date); // День недели 1 числа текущего месяца
 		                    var dm = responseData.clnd.length; // кол-во дней в мес
